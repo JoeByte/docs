@@ -40,9 +40,9 @@ useradd -s /sbin/nologin -d /data/www nginx
 mkdir -p /data/www
 mkdir -p /data/logs/nginx
 chown -R nginx:nginx /data/logs/nginx/
-wget http://nginx.org/download/nginx-1.10.1.tar.gz
-tar zxvf nginx-1.10.1.tar.gz
-cd nginx-1.10.1
+wget http://nginx.org/download/nginx-1.10.3.tar.gz
+tar zxvf nginx-1.10.3.tar.gz
+cd nginx-1.10.3
 ./configure --with-http_stub_status_module --with-http_ssl_module
 # --with-http_stub_status_module 监控模块
 make
@@ -50,7 +50,7 @@ make install
 # 软链
 ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
 mkdir /usr/local/nginx/conf/conf.d
-chmod -R nginx:nginx /usr/local/nginx/logs
+chown -R nginx:nginx /usr/local/nginx/logs
 
 sleep 1
 cd ..
