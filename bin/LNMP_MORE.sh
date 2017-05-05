@@ -40,9 +40,9 @@ useradd -s /sbin/nologin -d /data/www nginx
 mkdir -p /data/www
 mkdir -p /data/logs/nginx
 chown -R nginx:nginx /data/logs/nginx/
-wget http://nginx.org/download/nginx-1.10.3.tar.gz
-tar zxvf nginx-1.10.3.tar.gz
-cd nginx-1.10.3
+wget http://nginx.org/download/nginx-1.12.0.tar.gz
+tar zxvf nginx-1.12.0.tar.gz
+cd nginx-1.12.0
 ./configure --with-http_stub_status_module --with-http_ssl_module
 # --with-http_stub_status_module 监控模块
 make
@@ -63,11 +63,11 @@ sleep 2
 
 #MySQL安装 文档5231行 2.9 Installing MySQL from Source
 # 需要 yum -y install libaio
-# 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.13-osx10.11-x86_64.tar.gz
+# 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.18-osx10.11-x86_64.tar.gz
 useradd -s /sbin/nologin mysql
-wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.13-linux-glibc2.5-x86_64.tar.gz
-tar zxvf mysql-5.7.13-linux-glibc2.5-x86_64.tar.gz
-mv mysql-5.7.13-linux-glibc2.5-x86_64 /usr/local/mysql
+wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
+tar zxvf mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
+mv mysql-5.7.18-linux-glibc2.5-x86_64 /usr/local/mysql
 cd /usr/local/mysql/
 mkdir mysql-files
 chmod 770 mysql-files
@@ -200,16 +200,23 @@ cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 cp php.ini-production /usr/local/php/etc/php.ini
 
 # 修改配置文件 php-fpm.conf
+# tcp
 sed -i -e "s/user = nobody/user = nginx/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/group = nobody/group = nginx/g" /usr/local/php/etc/php-fpm.conf
+# unix
+sed -i -e "s/;listen.owner = nobody/listen.owner = nginx/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/;listen.group = nobody/listen.group = nginx/g" /usr/local/php/etc/php-fpm.conf
+# logs
 sed -i -e "s/;error_log =/error_log =/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/;log_level =/log_level =/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/;slowlog = /slowlog = /g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/;request_slowlog_timeout = 0/request_slowlog_timeout = 2/g" /usr/local/php/etc/php-fpm.conf
+# pm
 sed -i -e "s/pm.max_children = 5/pm.max_children = 128/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/pm.start_servers = 2/pm.start_servers = 64/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 32/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 128/g" /usr/local/php/etc/php-fpm.conf
-sed -i -e "s/;slowlog = /slowlog = /g" /usr/local/php/etc/php-fpm.conf
-sed -i -e "s/;request_slowlog_timeout = 0/request_slowlog_timeout = 2/g" /usr/local/php/etc/php-fpm.conf
+
 # 修改配置文件 php.ini
 sed -i -e "s/;date.timezone =/date.timezone = UTC/g" /usr/local/php/etc/php.ini
 
