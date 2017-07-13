@@ -16,11 +16,11 @@ echo "....开始安装依赖...."
 sleep 2
 
 #rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm
 #rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 
-yum -y install lrzsz wget vim cmake autoconf git mcrypt libaio pcre-devel p7zip re2c gpm gcc gcc-c++ libtool-ltdl libtool-ltdl-devel openssl openssl-devel curl curl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libc-client libc-client-devel gd gd-devel libmcrypt libmcrypt-devel libicu libicu-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel libxml2 libxml2-devel bison bison-devel libevent libenent-devel ncurses ncurses-devel krb5 krb5-devel gmp gmp-devel
+yum -y install lrzsz wget vim cmake autoconf git mcrypt libaio pcre-devel p7zip re2c gpm gcc gcc-c++ libtool-ltdl libtool-ltdl-devel openssl openssl-devel curl curl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libc-client libc-client-devel gd gd-devel libmcrypt libmcrypt-devel libicu libicu-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel libyaml-devel libxml2 libxml2-devel bison bison-devel libevent libenent-devel ncurses ncurses-devel krb5 krb5-devel gmp gmp-devel
 # libaio mysql5.7
 yum -y install net-tools iproute
 
@@ -64,6 +64,7 @@ sleep 2
 #MySQL安装 文档5231行 2.9 Installing MySQL from Source
 # 需要 yum -y install libaio
 # 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.18-osx10.11-x86_64.tar.gz
+# 搜狐镜像 http://mirrors.sohu.com/mysql/MySQL-5.7/
 useradd -s /sbin/nologin mysql
 wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
 tar zxvf mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
