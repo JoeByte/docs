@@ -94,6 +94,7 @@ ln -s /usr/local/mysql/bin/mysqladmin /usr/local/bin/mysqladmin
 
 # Link http://dev.mysql.com/doc/refman/5.7/en/server-options.html
 mkdir -p /data/logs/mysql
+touch /data/logs/mysql/mysql.log
 cp support-files/my-default.cnf /etc/my.cnf
 
 # [mysqld] 在此配置下添加
@@ -104,10 +105,10 @@ sed -i -e "s/^log-error\(.*\)/log-error=\/data\/logs\/mysql\/mysql.log/g" /etc/m
 # pid-file=/data/logs/mysql/mysql.pid
 sed -i -e "s/^pid-file\(.*\)/pid-file=\/data\/logs\/mysql\/mysql.pid/g" /etc/my.cnf
 
-# my.cnf 文件 mysqld_safe 与 client 标签下
+# my.cnf 文件 [mysqld_safe] 与 [client] 标签下
 # socket=/tmp/mysql.sock
 # 此处如非/tmp/mysql.sock位置,则php会出问题
-sed -i -e "s/^socket\(.*\)/socket=/tmp/mysql.sock/g" /etc/my.cnf
+sed -i -e "s/^socket\(.*\)/socket=\/tmp\/mysql.sock/g" /etc/my.cnf
 
 # [client] 在此配置下添加 TODO
 # socket=/data/logs/mysql/mysql.sock
@@ -132,7 +133,7 @@ echo "........................................................................."
 sleep 10
 ./bin/mysql_ssl_rsa_setup
 chown -R root .
-chown -R mysql /data/mysql /data/logs/mysql /usr/local/mysql/data mysql-files
+chown -R mysql /data/mysql /data/logs/mysql mysql-files
 
 
 # 加入启动项
