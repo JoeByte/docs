@@ -120,7 +120,7 @@ sed -i -e "s/^socket\(.*\)/socket=\/tmp\/mysql.sock/g" /etc/my.cnf
 # 初始化参考资料 https://dev.mysql.com/doc/refman/5.7/en/data-directory-initialization-mysqld.html
 # 此步骤生成授权密码 A temporary password is generated for root@localhost
 # 此处不指定 --datadir=/data/mysql 避免出现未知问题, 后续可软连到此目录
-./bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql
+./bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql --explicit_defaults_for_timestamp
 echo "........................................................................"
 echo ".... 此步骤生成授权密码 ..................................................."
 echo ".... SET PASSWORD = PASSWORD('your new password'); ....................."
@@ -160,10 +160,10 @@ ln -s /usr/local/mysql/lib/libmysqlclient.so.20 /usr/lib64/libmysqlclient.so.20
 cd /root/
 #wget http://cn2.php.net/distributions/php-5.5.31.tar.gz
 #wget http://cn2.php.net/distributions/php-5.6.17.tar.gz
-#wget http://cn2.php.net/distributions/php-7.0.10.tar.gz
-wget http://cn2.php.net/distributions/php-5.6.30.tar.gz
-tar zxvf php-5.6.30.tar.gz
-cd php-5.6.30
+#wget http://cn2.php.net/distributions/php-7.1.8.tar.gz
+wget http://cn2.php.net/distributions/php-5.6.31.tar.gz
+tar zxvf php-5.6.31.tar.gz
+cd php-5.6.31
 
 # 没有 ssh2 redis mongo
 # cp ./ext/phar/phar.php  ./ext/phar/phar.phar
@@ -221,6 +221,7 @@ sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 128/g" /usr/local/p
 
 # 修改配置文件 php.ini
 sed -i -e "s/;date.timezone =/date.timezone = UTC/g" /usr/local/php/etc/php.ini
+sed -i '/;extension=php_xsl.dll/a\zend_extension=opcache.so' /usr/local/php/etc/php.ini
 
 
 # 软链
@@ -277,9 +278,9 @@ sleep 1
 echo "....开始安装Redis...."
 sleep 2
 mkdir -p /data/redis/
-wget http://download.redis.io/releases/redis-3.0.7.tar.gz
-tar zxvf redis-3.0.7.tar.gz
-cd redis-3.0.7
+wget http://download.redis.io/releases/redis-4.0.1.tar.gz
+tar zxvf redis-4.0.1.tar.gz
+cd redis-4.0.1
 make PREFIX=/usr/local/redis install
 cp redis.conf /usr/local/redis/
 ln -s /usr/local/redis/bin/redis-server /usr/local/bin/redis-server
