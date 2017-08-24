@@ -326,9 +326,9 @@ pip install torndb
 # phpMyAdmin
 # 登录不上则修改config.inc.php的$cfg['Servers'][$i]['host']为127.0.0.1
 cd /data/www
-wget https://files.phpmyadmin.net/phpMyAdmin/4.5.4.1/phpMyAdmin-4.5.4.1-all-languages.zip
-unzip phpMyAdmin-4.5.4.1-all-languages.zip
-mv phpMyAdmin-4.5.4.1-all-languages phpMyAdmin
+wget https://files.phpmyadmin.net/phpMyAdmin/4.7.3/phpMyAdmin-4.7.3-all-languages.zip
+unzip phpMyAdmin-4.7.3-all-languages.zip
+mv phpMyAdmin-4.7.3-all-languages phpMyAdmin
 cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
 
 # composer
