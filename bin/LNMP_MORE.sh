@@ -5,12 +5,12 @@
 # Link      http://www.xxtime.com
 
 
-#环境
+# 环境
 export PATH=$PATH:/usr/local/bin
 #source ~/.bash_profile
 
 
-#依赖关系
+# 依赖关系
 sleep 1
 echo "....开始安装依赖...."
 sleep 2
@@ -35,7 +35,7 @@ sleep 1
 echo "....开始安装nginx...."
 sleep 2
 
-#nginx安装
+# 安装nginx
 useradd -s /sbin/nologin -d /data/www web
 mkdir -p /data/www
 mkdir -p /data/logs/nginx
@@ -61,7 +61,8 @@ sleep 1
 echo "....开始安装mysql...."
 sleep 2
 
-#MySQL安装 文档5231行 2.9 Installing MySQL from Source
+
+# 安装MySQL 文档5231行 2.9 Installing MySQL from Source
 # 需要 yum -y install libaio
 # 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.18-osx10.11-x86_64.tar.gz
 # 搜狐镜像 http://mirrors.sohu.com/mysql/MySQL-5.7/
@@ -135,7 +136,6 @@ sleep 10
 chown -R root .
 chown -R mysql /data/mysql /data/logs/mysql mysql-files
 
-
 # 加入启动项
 #cp support-files/mysql.server /etc/init.d/mysql.server
 
@@ -156,10 +156,9 @@ sleep 2
 #ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /usr/lib64/libmysqlclient.so.18
 ln -s /usr/local/mysql/lib/libmysqlclient.so.20 /usr/lib64/libmysqlclient.so.20
 
-#PHP安装
+
+# 安装PHP
 cd /root/
-#wget http://cn2.php.net/distributions/php-5.5.31.tar.gz
-#wget http://cn2.php.net/distributions/php-5.6.17.tar.gz
 #wget http://cn2.php.net/distributions/php-7.1.8.tar.gz
 wget http://cn2.php.net/distributions/php-5.6.31.tar.gz
 tar zxvf php-5.6.31.tar.gz
@@ -223,7 +222,6 @@ sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 128/g" /usr/local/p
 sed -i -e "s/;date.timezone =/date.timezone = UTC/g" /usr/local/php/etc/php.ini
 sed -i '/;extension=php_xsl.dll/a\zend_extension=opcache.so' /usr/local/php/etc/php.ini
 
-
 # 软链
 ln -s /usr/local/php/bin/php /usr/local/bin/php
 ln -s /usr/local/php/bin/php-config /usr/local/bin/php-config
@@ -254,7 +252,6 @@ cd cphalcon/build
 sed -i '/;extension=php_xsl.dll/a\extension=phalcon.so' /usr/local/php/etc/php.ini
 
 
-
 sleep 1
 cd ..
 echo "....Phalcon安装完成...."
@@ -269,6 +266,34 @@ echo "/usr/local/nginx/conf"
 echo "/usr/local/mysql/my.cnf"
 echo "........................................"
 
+
+sleep 1
+cd ..
+echo "........................................"
+sleep 1
+echo "....开始安装PHP Redis拓展...."
+wget https://github.com/phpredis/phpredis/archive/develop.zip -O phpredis.zip
+unzip phpredis.zip
+cd phpredis-develop
+phpize
+./configure
+make && make install
+sed -i '/;extension=php_xsl.dll/a\extension=redis.so' /usr/local/php/etc/php.ini
+
+
+# composer
+cd /root/
+curl -sS https://getcomposer.org/installer | /usr/local/bin/php
+mv composer.phar /usr/local/bin/composer.phar
+
+
+# phpMyAdmin
+# 登录不上则修改config.inc.php的$cfg['Servers'][$i]['host']为127.0.0.1
+cd /data/www
+wget https://files.phpmyadmin.net/phpMyAdmin/4.7.3/phpMyAdmin-4.7.3-all-languages.zip
+unzip phpMyAdmin-4.7.3-all-languages.zip
+mv phpMyAdmin-4.7.3-all-languages phpMyAdmin
+cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
 
 
 sleep 1
@@ -286,27 +311,17 @@ cp redis.conf /usr/local/redis/
 ln -s /usr/local/redis/bin/redis-server /usr/local/bin/redis-server
 ln -s /usr/local/redis/bin/redis-cli /usr/local/bin/redis-cli
 # 配置文件
-# 产品环境不使用KEYS对性能影响很大
-# 禁用危险指令 FLUSHALL, FLUSHDB, CONFIG
-sed -i '/# bind 127.0.0.1/a\bind 127.0.0.1' /usr/local/redis/redis.conf
-sed -i -e "s/port 6379/port 7380/g" /usr/local/redis/redis.conf
-sed -i -e "s/# rename-command CONFIG \"\"/rename-command CONFIG \"\"/g" /usr/local/redis/redis.conf
 sed -i -e "s/daemonize no/daemonize yes/g" /usr/local/redis/redis.conf
 sed -i -e "s/logfile \"\"/logfile \"\/data\/redis\/redis.log\"/g" /usr/local/redis/redis.conf
 sed -i -e "s/dir .\//dir \/data\/redis\//g" /usr/local/redis/redis.conf
 
-sleep 1
-cd ..
-echo "........................................"
-sleep 1
-echo "....开始安装PHP Redis拓展...."
-wget https://github.com/phpredis/phpredis/archive/develop.zip -O phpredis.zip
-unzip phpredis.zip
-cd phpredis-develop
-phpize
-./configure
-make && make install
-sed -i '/;extension=php_xsl.dll/a\extension=redis.so' /usr/local/php/etc/php.ini
+# 禁用危险指令 CONFIG, FLUSHALL, FLUSHDB
+# 产品环境不使用KEYS对性能影响很大
+# sed -i -e "s/port 6379/port 6379/g" /usr/local/redis/redis.conf
+sed -i '/# bind 127.0.0.1/a\bind 127.0.0.1' /usr/local/redis/redis.conf
+sed -i -e "s/# rename-command CONFIG \"\"/rename-command CONFIG \"\"/g" /usr/local/redis/redis.conf
+sed -i '/^rename-command CONFIG/a\rename-command FLUSHALL \"\"' /usr/local/redis/redis.conf
+sed -i '/^rename-command CONFIG/a\rename-command FLUSHDB f671c157a1a449f9c8d31e8594e25df2' /usr/local/redis/redis.conf
 
 
 # python2.7 MySQL, Redis 拓展
@@ -322,19 +337,4 @@ pip install torndb
 # ........................................................................................................................
 # 数据同步
 # https://github.com/alibaba/otter/wiki/Manager_Quickstart
-
-# phpMyAdmin
-# 登录不上则修改config.inc.php的$cfg['Servers'][$i]['host']为127.0.0.1
-cd /data/www
-wget https://files.phpmyadmin.net/phpMyAdmin/4.7.3/phpMyAdmin-4.7.3-all-languages.zip
-unzip phpMyAdmin-4.7.3-all-languages.zip
-mv phpMyAdmin-4.7.3-all-languages phpMyAdmin
-cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
-
-# composer
-cd /root/
-curl -sS https://getcomposer.org/installer | /usr/local/bin/php
-mv composer.phar /usr/local/bin/composer.phar
-
-
 
