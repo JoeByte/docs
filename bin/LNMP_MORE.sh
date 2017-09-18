@@ -36,10 +36,10 @@ echo "....开始安装nginx...."
 sleep 2
 
 # 安装nginx
-useradd -s /sbin/nologin -d /data/www web
+useradd -s /sbin/nologin -d /data/www www
 mkdir -p /data/www
 mkdir -p /data/logs/nginx
-chown -R web:web /data/logs/nginx/
+chown -R www:www /data/logs/nginx/
 wget http://nginx.org/download/nginx-1.12.0.tar.gz
 tar zxvf nginx-1.12.0.tar.gz
 cd nginx-1.12.0
@@ -50,7 +50,7 @@ make install
 # 软链
 ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
 mkdir /usr/local/nginx/conf/conf.d
-chown -R web:web /usr/local/nginx/logs
+chown -R www:www /usr/local/nginx/logs
 
 sleep 1
 cd ..
@@ -202,11 +202,11 @@ cp php.ini-production /usr/local/php/etc/php.ini
 
 # 修改配置文件 php-fpm.conf
 # tcp
-sed -i -e "s/user = nobody/user = web/g" /usr/local/php/etc/php-fpm.conf
-sed -i -e "s/group = nobody/group = web/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/user = nobody/user = www/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/group = nobody/group = www/g" /usr/local/php/etc/php-fpm.conf
 # unix
-sed -i -e "s/;listen.owner = nobody/listen.owner = web/g" /usr/local/php/etc/php-fpm.conf
-sed -i -e "s/;listen.group = nobody/listen.group = web/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/;listen.owner = nobody/listen.owner = www/g" /usr/local/php/etc/php-fpm.conf
+sed -i -e "s/;listen.group = nobody/listen.group = www/g" /usr/local/php/etc/php-fpm.conf
 # logs
 sed -i -e "s/;error_log =/error_log =/g" /usr/local/php/etc/php-fpm.conf
 sed -i -e "s/;log_level =/log_level =/g" /usr/local/php/etc/php-fpm.conf
