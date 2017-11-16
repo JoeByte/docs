@@ -15,8 +15,8 @@ sleep 1
 echo "....开始安装依赖...."
 sleep 2
 
-#rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm
+#rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/Packages/e/epel-release-6-8.noarch.rpm
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
 #rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 
@@ -295,9 +295,9 @@ mv composer.phar /usr/local/bin/composer.phar
 # phpMyAdmin
 # 登录不上则修改config.inc.php的$cfg['Servers'][$i]['host']为127.0.0.1
 cd /data/www
-wget https://files.phpmyadmin.net/phpMyAdmin/4.7.3/phpMyAdmin-4.7.3-all-languages.zip
-unzip phpMyAdmin-4.7.3-all-languages.zip
-mv phpMyAdmin-4.7.3-all-languages phpMyAdmin
+wget https://files.phpmyadmin.net/phpMyAdmin/4.7.5/phpMyAdmin-4.7.5-all-languages.zip
+unzip phpMyAdmin-4.7.5-all-languages.zip
+mv phpMyAdmin-4.7.5-all-languages phpMyAdmin
 cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
 
 
