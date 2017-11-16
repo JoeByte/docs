@@ -40,9 +40,9 @@ useradd -s /sbin/nologin -d /data/www www
 mkdir -p /data/www
 mkdir -p /data/logs/nginx
 chown -R www:www /data/logs/nginx/
-wget http://nginx.org/download/nginx-1.12.0.tar.gz
-tar zxvf nginx-1.12.0.tar.gz
-cd nginx-1.12.0
+wget http://nginx.org/download/nginx-1.12.2.tar.gz
+tar zxvf nginx-1.12.2.tar.gz
+cd nginx-1.12.2
 ./configure --with-http_stub_status_module --with-http_ssl_module
 # --with-http_stub_status_module 监控模块
 make
@@ -69,12 +69,12 @@ sleep 2
 
 # 安装MySQL 文档5231行 2.9 Installing MySQL from Source
 # 需要 yum -y install libaio
-# 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.18-osx10.11-x86_64.tar.gz
+# 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.20-osx10.11-x86_64.tar.gz
 # 搜狐镜像 http://mirrors.sohu.com/mysql/MySQL-5.7/
 useradd -s /sbin/nologin mysql
-wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
-tar zxvf mysql-5.7.18-linux-glibc2.5-x86_64.tar.gz
-mv mysql-5.7.18-linux-glibc2.5-x86_64 /usr/local/mysql
+wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
+tar zxvf mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
+mv mysql-5.7.20-linux-glibc2.5-x86_64 /usr/local/mysql
 cd /usr/local/mysql/
 mkdir mysql-files
 chmod 770 mysql-files
@@ -165,9 +165,9 @@ ln -s /usr/local/mysql/lib/libmysqlclient.so.20 /usr/lib64/libmysqlclient.so.20
 # 安装PHP
 cd /root/
 #wget http://cn2.php.net/distributions/php-7.1.8.tar.gz
-wget http://cn2.php.net/distributions/php-5.6.31.tar.gz
-tar zxvf php-5.6.31.tar.gz
-cd php-5.6.31
+wget http://cn2.php.net/distributions/php-5.6.32.tar.gz
+tar zxvf php-5.6.32.tar.gz
+cd php-5.6.32
 
 # 没有 ssh2 redis mongo
 # cp ./ext/phar/phar.php  ./ext/phar/phar.phar
@@ -308,9 +308,9 @@ sleep 1
 echo "....开始安装Redis...."
 sleep 2
 mkdir -p /data/redis/
-wget http://download.redis.io/releases/redis-4.0.1.tar.gz
-tar zxvf redis-4.0.1.tar.gz
-cd redis-4.0.1
+wget http://download.redis.io/releases/redis-4.0.2.tar.gz
+tar zxvf redis-4.0.2.tar.gz
+cd redis-4.0.2
 make PREFIX=/usr/local/redis install
 cp redis.conf /usr/local/redis/
 ln -s /usr/local/redis/bin/redis-server /usr/local/bin/redis-server
