@@ -41,7 +41,7 @@ mkdir -p /data/www
 mkdir -p /data/logs/nginx
 chown -R www:www /data/logs/nginx/
 wget http://nginx.org/download/nginx-1.12.2.tar.gz
-tar zxvf nginx-1.12.2.tar.gz
+tar zxf nginx-1.12.2.tar.gz
 cd nginx-1.12.2
 ./configure --with-http_stub_status_module --with-http_ssl_module
 # --with-http_stub_status_module 监控模块
@@ -73,7 +73,7 @@ sleep 2
 # 搜狐镜像 http://mirrors.sohu.com/mysql/MySQL-5.7/
 useradd -s /sbin/nologin mysql
 wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
-tar zxvf mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
+tar zxf mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
 mv mysql-5.7.20-linux-glibc2.5-x86_64 /usr/local/mysql
 cd /usr/local/mysql/
 mkdir mysql-files
@@ -166,7 +166,7 @@ ln -s /usr/local/mysql/lib/libmysqlclient.so.20 /usr/lib64/libmysqlclient.so.20
 cd /root/
 #wget http://cn2.php.net/distributions/php-7.1.8.tar.gz
 wget http://cn2.php.net/distributions/php-5.6.32.tar.gz
-tar zxvf php-5.6.32.tar.gz
+tar zxf php-5.6.32.tar.gz
 cd php-5.6.32
 
 # 没有 ssh2 redis mongo
@@ -309,7 +309,7 @@ echo "....开始安装Redis...."
 sleep 2
 mkdir -p /data/redis/
 wget http://download.redis.io/releases/redis-4.0.2.tar.gz
-tar zxvf redis-4.0.2.tar.gz
+tar zxf redis-4.0.2.tar.gz
 cd redis-4.0.2
 make PREFIX=/usr/local/redis install
 cp redis.conf /usr/local/redis/
