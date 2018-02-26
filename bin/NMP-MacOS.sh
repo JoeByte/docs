@@ -51,6 +51,10 @@ ln -s /usr/local/php5/bin/php-config /usr/local/bin/php-config
 ln -s /usr/local/php5/bin/phpize /usr/local/bin/phpize
 ln -s /usr/local/php5/sbin/php-fpm /usr/local/bin/php-fpm
 
+# 安装Composer
+cd ${install_path}
+curl -sS https://getcomposer.org/installer | /usr/local/bin/php
+mv composer.phar /usr/local/bin/composer
 
 # 安装phalcon
 cd ${install_path}
@@ -71,9 +75,11 @@ mkdir -p /data/mysql
 ln -s /data/mysql /usr/local/mysql/data
 chown -R mysql:mysql /usr/local/mysql/data
 cd /usr/local/mysql/bin
-./mysqld --initialize --user=mysql --basedir=/usr/local/mysql —explicit_defaults_for_timestamp
+./mysqld --initialize --user=mysql --basedir=/usr/local/mysql --explicit_defaults_for_timestamp
 ln -s /usr/local/mysql/bin/mysql /usr/local/bin/mysql
 ln -s /usr/local/mysql/bin/mysqld_safe /usr/local/bin/mysqld_safe
+# MySQL密码策略
+# ALTER USER USER() IDENTIFIED BY 'new_password'
 
 
 # Redis
