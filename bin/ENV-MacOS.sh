@@ -32,6 +32,15 @@ cd openssl-1.1.0g
 make && make install
 
 
+# 安装yaml
+cd ${install_path}
+curl -O http://pyyaml.org/download/libyaml/yaml-0.1.7.tar.gz
+tar zxf yaml-0.1.7.tar.gz
+cd yaml-0.1.7
+./configure
+make && make install
+
+
 # 安装nginx
 cd ${install_path}
 curl -O http://nginx.org/download/nginx-1.12.2.tar.gz
@@ -51,6 +60,7 @@ ln -s /usr/local/php5/bin/php-config /usr/local/bin/php-config
 ln -s /usr/local/php5/bin/phpize /usr/local/bin/phpize
 ln -s /usr/local/php5/sbin/php-fpm /usr/local/bin/php-fpm
 
+
 # 安装Composer
 cd ${install_path}
 curl -sS https://getcomposer.org/installer | /usr/local/bin/php
@@ -61,9 +71,28 @@ cd ${install_path}
 git clone --depth=1 "git://github.com/phalcon/cphalcon.git"
 cd cphalcon/build
 sudo ./install
-cd /usr/local/php5/php.d
-touch 50-extension-phalcon.ini
-echo 'extension=phalcon.so' > 50-extension-phalcon.ini
+echo 'extension=phalcon.so' > /usr/local/php5/php.d/50-extension-phalcon.ini
+
+
+# 安装php拓展 yaml
+# TODO :: 此处有交互处理
+cd ${install_path}
+pecl install yaml
+echo 'extension=yaml.so' > /usr/local/php5/php.d/50-extension-yaml.ini
+
+
+# 更新拓展 MongoDB extension 1.4.2
+# 此处不建议使用pecl命令直接更新. pecl可能因为找不到openssl而失败
+# 找不到openssl会提示错误 mongodb-1.4.2/src/libmongoc/src/mongoc/mongoc-init.c:32:10: fatal error: 'tls.h' file not found
+# pecl uninstall mongodb && pecl install mongodb
+cd ${install_path}
+curl -O https://pecl.php.net/get/mongodb-1.4.2.tgz
+tar zxf mongodb-1.4.2.tgz
+cd mongodb-1.4.2
+phpize
+# 此处openssl位置根据实际情况调整
+./configure --with-mongodb-ssl=/usr/local/include/openssl
+make && make install
 
 
 # 安装MySQL
@@ -105,3 +134,14 @@ rename-command FLUSHALL \"\"\\
 sed -i '' "/^rename-command CONFIG/a\\
 rename-command FLUSHDB f671c157a1a449f9c8d31e8594e25df2\\
 " /usr/local/redis/redis.conf
+
+
+# MongoDB
+cd ${install_path}
+curl -O https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.3.tgz
+tar zxf mongodb-osx-ssl-x86_64-3.6.3.tgz
+mv mongodb-osx-ssl-x86_64-3.6.3 /usr/local/
+ln -s /usr/local/mongodb/bin/mongo /usr/local/bin/mongo
+ln -s /usr/local/mongodb/bin/mongod /usr/local/bin/mongod
+touch /usr/local/mongodb/mongod.conf.yml
+
