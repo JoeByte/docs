@@ -49,6 +49,8 @@ cd nginx-1.12.2
 ./configure --with-http_stub_status_module --with-http_ssl_module
 make && make install
 ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
+chown -R www:www /usr/local/nginx/logs
+chown -R www:www /usr/local/nginx/*temp
 
 
 # 安装PHP

@@ -52,7 +52,7 @@ ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
 
 # 配置
 mkdir /usr/local/nginx/conf/conf.d
-sed -i -e "s/user  nginx/user  www/g" /usr/local/nginx/conf/nginx.conf
+sed -i -e "s/user  nobody/user  www/g" /usr/local/nginx/conf/nginx.conf
 # 权限
 chown -R www:www /usr/local/nginx/logs
 chown -R www:www /usr/local/nginx/*temp
