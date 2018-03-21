@@ -72,7 +72,7 @@ sleep 2
 # 苹果系统 wget http://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.20-osx10.11-x86_64.tar.gz
 # 搜狐镜像 http://mirrors.sohu.com/mysql/MySQL-5.7/
 useradd -s /sbin/nologin mysql
-wget http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
+wget https://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.21-linux-glibc2.12-x86_64.tar.gz
 tar zxf mysql-5.7.20-linux-glibc2.5-x86_64.tar.gz
 mv mysql-5.7.20-linux-glibc2.5-x86_64 /usr/local/mysql
 cd /usr/local/mysql/

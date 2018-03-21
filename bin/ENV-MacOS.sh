@@ -99,7 +99,8 @@ make && make install
 
 # 安装MySQL
 cd ${install_path}
-curl -O https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.21-macos10.13-x86_64.tar.gz
+#curl -O https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.21-macos10.13-x86_64.tar.gz
+curl -O https://cdn.mysql.com/Downloads/MySQL-5.7/mysql-5.7.21-macos10.13-x86_64.tar.gz
 tar zxf mysql-5.7.21-macos10.13-x86_64.tar.gz
 mv mysql-5.7.21-macos10.13-x86_64 /usr/local/mysql
 mkdir -p /data/mysql
