@@ -36,8 +36,8 @@ echo "....开始安装nginx...."
 sleep 2
 
 # 安装nginx
-useradd -s /sbin/nologin -d /data/www www
 mkdir -p /data/www
+useradd -s /sbin/nologin -d /data/www www
 mkdir -p /data/logs/nginx
 chown -R www:www /data/logs/nginx/
 wget http://nginx.org/download/nginx-1.12.2.tar.gz
