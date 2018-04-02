@@ -65,6 +65,9 @@ function install_zookeeper(){
     # 启动
     # /usr/local/zookeeper/bin/zkServer.sh start
     #
+    # 关闭
+    # /usr/local/zookeeper/bin/zkServer.sh stop
+    #
     # 连接
     # /usr/local/zookeeper/bin/zkCli.sh -server 127.0.0.1:2181
     return
@@ -83,9 +86,23 @@ function install_kafka(){
     curl -O http://mirrors.tuna.tsinghua.edu.cn/apache/kafka/1.0.1/kafka_2.11-1.0.1.tgz
     tar xzf kafka_2.11-1.0.1.tgz
     mv kafka_2.11-1.0.1 /usr/local/kafka
+
     # 配置
-    # port = 9092
-    # advertised.host.name = 172.0.0.2 
+    ip=`get_ip`
+    config='/usr/local/kafka/config/server.properties'
+    sed -i "s/zookeeper.connect=localhost:2181/zookeeper.connect=zoo1:2181,zoo2:2181,zoo3:2181\/kafka/g" $config
+    sed -i "s/log.dirs=\/tmp\/kafka-logs/log.dirs=\/data\/kafka-logs/g" $config
+    sed -i '/broker.id=/a\delete.topic.enable=true' $config
+    sed -i "/broker.id=/a\port=9092" $config
+    sed -i "/broker.id=/a\advertised.host.name=${ip}" $config
+
+    # TODO :: 手动标注broker.id=1
+
+    # 启动
+    # nohup /usr/local/kafka/bin/kafka-server-start.sh /usr/local/kafka/config/server.properties &
+    #
+    # 关闭
+    # /usr/local/kafka/bin/kafka-server-stop.sh
     return
 }
 
