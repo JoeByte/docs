@@ -7,9 +7,13 @@
 
 # 安装环境
 function env(){
+    
     yum install -y vim net-tools
+    
     # nginx需要
     yum install -y gcc pcre-devel openssl-devel
+    
+
     return
 }
 
@@ -22,11 +26,25 @@ function get_ip(){
 
 # 安装java
 function install_java(){
+    exist=`ls /usr/local/ | grep java | wc -l`
+    if [ $exist -gt 0 ]; then
+        echo "java is already installed"
+        return
+    fi
+
+
+    # TODO :: 手动下载java
     # https://www.java.com/en/download/manual.jsp
-    export JAVA_HOME=/usr/local/java
-    export PATH=$PATH:$JAVA_HOME/bin
-    # export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-    # source ~/.bashrc 
+
+    # 环境变量
+    env=`cat ~/.bashrc | grep JAVA_HOME | wc -l`
+    if [ $env -gt 0 ]; then
+        echo "java environment is already installed"
+        return
+    fi
+    echo 'export JAVA_HOME=/usr/local/java' >> ~/.bashrc
+    echo 'export PATH=$PATH:$JAVA_HOME/bin' >> ~/.bashrc
+    source ~/.bashrc 
     return
 }
 
@@ -113,9 +131,33 @@ function install_flume(){
         echo "flume is already installed"
         return
     fi
-    # curl -O http://mirrors.tuna.tsinghua.edu.cn/apache/flume/1.8.0/apache-flume-1.8.0-bin.tar.gz
-    # tar xzf apache-flume-1.8.0-bin.tar.gz
-    # mv apache-flume-1.8.0-bin /usr/local/flume
+    
+    echo "start install flume ..."
+    cd ${download_path}
+    curl -O http://mirrors.tuna.tsinghua.edu.cn/apache/flume/1.8.0/apache-flume-1.8.0-bin.tar.gz
+    tar xzf apache-flume-1.8.0-bin.tar.gz
+    mv apache-flume-1.8.0-bin /usr/local/flume
+
+    # 配置
+    cat > /usr/local/flume/conf/kafka-conf.properties << EOF
+a1.sources = r1
+a1.channels = c1
+a1.sinks = k1
+a1.sources.r1.channels = c1
+a1.sources.r1.type = exec
+a1.sources.r1.command = tail -F /data/logs/nginx/access.log
+a1.channels.c1.type = org.apache.flume.channel.kafka.KafkaChannel
+a1.channels.c1.kafka.bootstrap.servers = kafka1:9092,kafka2:9092,kafka3:9092
+a1.channels.c1.kafka.topic = nginx
+a1.channels.c1.kafka.consumer.group.id = flume-consumer
+EOF
+
+    # TODO :: 加入kafka服务器IP到hosts文件
+
+    # 启动
+    # cd /usr/local/flume
+    # bin/flume-ng agent --conf conf --conf-file conf/kafka-conf.properties --name a1 -Dflume.root.logger=INFO,console
+
     return
 }
 
