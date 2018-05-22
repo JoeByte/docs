@@ -169,6 +169,7 @@ wget http://cn2.php.net/distributions/php-5.6.32.tar.gz
 tar zxf php-5.6.32.tar.gz
 cd php-5.6.32
 
+# 备注: Mcrypt在PHP7.1.0中被弃用， 在PHP7.2.0中删除. 替代OpenSSL, Sodium (available as of PHP 7.2.0)
 # 没有 ssh2 redis mongo
 # cp ./ext/phar/phar.php  ./ext/phar/phar.phar
 #./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql --with-gettext --with-iconv --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --with-openssl --enable-soap --enable-zip --enable-opcache=no

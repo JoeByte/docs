@@ -162,6 +162,30 @@ EOF
 }
 
 function docs(){
+        cat << EOF
+========================================================================
+NAME
+    distools - Distributed environment installation tools.
+
+SYNOPSIS
+    distools.sh install <package>
+
+DESCRIPTION
+    this project is used to install zookeeper flume kafka spark hadoop
+
+    The options are as follows:
+
+    -i <package>        install a package, the alias of install
+
+    install <package>   install a package
+
+EXAMPLES
+    The following is how to install zookeeper
+
+        distools.sh install zookeeper
+========================================================================
+
+EOF
     return
 }
 
@@ -174,11 +198,11 @@ function main(){
 
 count=$#
 if [ $count != 2 ]; then
-    echo 'args input error'
+    docs
     exit
 else
     if [ $1 != 'install' ]; then
-        echo 'comman install <package>'
+        docs
         exit
     fi
 fi
