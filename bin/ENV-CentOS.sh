@@ -172,15 +172,15 @@ cd php-5.6.32
 # 备注: Mcrypt在PHP7.1.0中被弃用， 在PHP7.2.0中删除. 替代OpenSSL, Sodium (available as of PHP 7.2.0)
 # 没有 ssh2 redis mongo
 # cp ./ext/phar/phar.php  ./ext/phar/phar.phar
-#./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql --with-gettext --with-iconv --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-fpm --enable-mbstring --with-mcrypt --with-gd --enable-gd-native-ttf --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --with-openssl --enable-soap --enable-zip --enable-opcache=no
+#./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql --with-gettext --with-iconv --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-fpm --enable-mbstring --with-gd --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --with-openssl --enable-soap --enable-zip --enable-opcache=no
 ./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d \
 --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
---with-curl --with-xmlrpc --with-openssl --with-gettext --with-iconv --with-mcrypt --with-mhash --with-freetype-dir \
+--with-curl --with-xmlrpc --with-openssl --with-gettext --with-iconv --with-mhash --with-freetype-dir \
 --with-jpeg-dir --with-png-dir --with-gd \
 --with-zlib --with-libxml-dir=/usr \
 --enable-fpm --enable-exif --enable-xml --disable-rpath --enable-bcmath \
 --enable-shmop --enable-sysvsem --enable-sysvshm --enable-sysvmsg \
---enable-inline-optimization --enable-mbregex --enable-mbstring --enable-gd-native-ttf --enable-pcntl \
+--enable-inline-optimization --enable-mbregex --enable-mbstring --enable-pcntl \
 --enable-sockets  --enable-soap \
 --enable-zip --enable-opcache \
 --enable-intl
@@ -199,6 +199,8 @@ cd php-5.6.32
 # pecl install intl    
 # MAC brew 安装的ICU位置/usr/local/Cellar/icu4c/55.1
 # @link http://php.net/manual/zh/intro.intl.php
+
+# 废弃 --with-mcrypt --enable-gd-native-ttf
 
 make
 make install
