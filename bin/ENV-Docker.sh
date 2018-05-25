@@ -111,8 +111,10 @@ function install_kafka(){
     sed -i "s/zookeeper.connect=localhost:2181/zookeeper.connect=zoo1:2181,zoo2:2181,zoo3:2181\/kafka/g" $config
     sed -i "s/log.dirs=\/tmp\/kafka-logs/log.dirs=\/data\/kafka-logs/g" $config
     sed -i '/broker.id=/a\delete.topic.enable=true' $config
-    sed -i "/broker.id=/a\port=9092" $config
-    sed -i "/broker.id=/a\advertised.host.name=${ip}" $config
+    sed -i "/broker.id=/a\listeners=PLAINTEXT:\/\/${ip}:9092" $config
+    # 新版本中 advertised.listeners或者listeners 取代 advertised.host.name 和 port
+    # sed -i "/broker.id=/a\port=9092" $config
+    # sed -i "/broker.id=/a\advertised.host.name=${ip}" $config
 
     # TODO :: 手动标注broker.id=1
 
@@ -161,6 +163,48 @@ EOF
     return
 }
 
+# 安装hbase
+function install_hbase(){
+    exist=`ls /usr/local | grep hbase | wc -l`
+    if [ $exist -gt 0 ]; then
+        echo "hbase is already installed"
+        return
+    fi
+    
+    curl -O http://mirrors.shu.edu.cn/apache/hbase/2.0.0/hbase-2.0.0-bin.tar.gz
+    tar xzf hbase-2.0.0-bin.tar.gz
+    mv hbase-2.0.0 /usr/local/hbase
+
+    # 使用现有已存在的zookeeper
+    sed -i "s/# export HBASE_MANAGES_ZK=true/export HBASE_MANAGES_ZK=false/g" /usr/local/hbase/conf/hbase-env.sh
+
+    # 启动
+    # bin/start-hbase.sh
+
+    # 关闭
+    # bin/stop-hbase.sh
+
+
+    # 参考配置 hbase-site.xml
+    # hbase.rootdir 可配置为HDFS  hdfs://
+    # 
+    # <configuration>
+    #   <property>
+    #     <name>hbase.rootdir</name>
+    #     <value>file:///tmp/hbase</value>
+    #   </property>
+    #   <property>
+    #     <name>hbase.cluster.distributed</name>
+    #     <value>true</value>
+    #   </property>
+    #   <property>
+    #     <name>hbase.zookeeper.quorum</name>
+    #     <value>zoo1,zoo2,zoo3</value>
+    #   </property>
+    # </configuration>
+}
+
+# 文档
 function docs(){
         cat << EOF
 ========================================================================
@@ -189,12 +233,12 @@ EOF
     return
 }
 
+# 入口
 function main(){
     func='install_'$1
     $func
     return
 }
-
 
 count=$#
 if [ $count != 2 ]; then
