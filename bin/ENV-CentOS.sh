@@ -20,7 +20,7 @@ rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7
 #rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 
-yum -y install lrzsz wget vim cmake autoconf git unzip mcrypt libaio pcre-devel p7zip re2c gpm gcc gcc-c++ libtool-ltdl libtool-ltdl-devel openssl openssl-devel curl curl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libc-client libc-client-devel gd gd-devel libmcrypt libmcrypt-devel libicu libicu-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel libyaml-devel libxml2 libxml2-devel bison bison-devel libevent libenent-devel ncurses ncurses-devel krb5 krb5-devel gmp gmp-devel
+yum -y install lrzsz wget vim cmake autoconf git unzip libaio pcre-devel p7zip re2c gpm gcc gcc-c++ libtool-ltdl libtool-ltdl-devel openssl openssl-devel curl curl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libc-client libc-client-devel gd gd-devel libicu libicu-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel libyaml-devel libxml2 libxml2-devel bison bison-devel libevent libenent-devel ncurses ncurses-devel krb5 krb5-devel gmp gmp-devel
 # libaio mysql5.7
 yum -y install net-tools iproute
 
