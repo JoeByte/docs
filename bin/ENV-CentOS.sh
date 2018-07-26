@@ -16,7 +16,7 @@ function install_env(){
     # 依赖关系
     sleep 1
     echo "....开始安装依赖...."
-    sleep 2
+    sleep 1
 
     #rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/i386/Packages/e/epel-release-6-8.noarch.rpm
     rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
@@ -25,12 +25,10 @@ function install_env(){
 
     yum -y install lrzsz wget vim cmake autoconf git unzip libaio pcre-devel p7zip re2c gpm gcc gcc-c++ libtool-ltdl libtool-ltdl-devel openssl openssl-devel curl curl-devel libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libc-client libc-client-devel gd gd-devel libicu libicu-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel libyaml-devel libxml2 libxml2-devel bison bison-devel libevent libenent-devel ncurses ncurses-devel krb5 krb5-devel gmp gmp-devel
     # libaio mysql5.7
-    yum -y install net-tools iproute
 
     # Centos7
-    #yum install net-tools iproute
+    yum -y install net-tools iproute
 
-    sleep 1
     echo "....依赖安装完成...."
     sleep 1
 }
@@ -195,15 +193,14 @@ function install_php(){
 
     # 安装PHP
     cd ${download_path}
-    #wget http://cn2.php.net/distributions/php-7.1.8.tar.gz
-    curl -O http://cn2.php.net/distributions/php-5.6.32.tar.gz
-    tar zxf php-5.6.32.tar.gz
-    cd php-5.6.32
+    # curl -O http://cn2.php.net/distributions/php-5.6.32.tar.gz
+    curl -O http://cn2.php.net/distributions/php-7.2.8.tar.gz
+    tar zxf php-7.2.8.tar.gz
+    cd php-7.2.8
 
     # 备注: Mcrypt在PHP7.1.0中被弃用， 在PHP7.2.0中删除. 替代OpenSSL, Sodium (available as of PHP 7.2.0)
     # 没有 ssh2 redis mongo
     # cp ./ext/phar/phar.php  ./ext/phar/phar.phar
-    #./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d --with-mysql=/usr/local/mysql --with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql --with-gettext --with-iconv --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --enable-mbregex --enable-fpm --enable-mbstring --with-gd --with-mhash --enable-pcntl --enable-sockets --with-xmlrpc --with-openssl --enable-soap --enable-zip --enable-opcache=no
     ./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-config-file-scan-dir=/usr/local/php/etc/php.d \
     --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
     --with-curl --with-xmlrpc --with-openssl --with-gettext --with-iconv --with-mhash --with-freetype-dir \
