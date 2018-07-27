@@ -236,27 +236,47 @@ function install_php(){
     cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
     cp php.ini-production /usr/local/php/etc/php.ini
 
-    # 修改配置文件 php-fpm.conf
-    # tcp
-    sed -i -e "s/user = nobody/user = www/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/group = nobody/group = www/g" /usr/local/php/etc/php-fpm.conf
-    # unix
-    sed -i -e "s/;listen.owner = nobody/listen.owner = www/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/;listen.group = nobody/listen.group = www/g" /usr/local/php/etc/php-fpm.conf
+
+    dirPhpfpmd=`ls /usr/local/php/etc/ | grep php-fpm.d | wc -l`
+    if [ $dirPhpfpmd -gt 0 ]; then
+        cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
+    fi
+
+
     # logs
     sed -i -e "s/;error_log =/error_log =/g" /usr/local/php/etc/php-fpm.conf
     sed -i -e "s/;log_level =/log_level =/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/;slowlog = /slowlog = /g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/;request_slowlog_timeout = 0/request_slowlog_timeout = 2/g" /usr/local/php/etc/php-fpm.conf
+
+    # 配置: php-fpm.conf
+    # php7.2 在/usr/local/php/etc/php-fpm.d/www.conf
+    # php5.6 在/usr/local/php/etc/php-fpm.conf
+    fpmConf='/usr/local/php/etc/php-fpm.d/www.conf'
+    ####
+    # slowlog
+    sed -i -e "s/;request_slowlog_timeout = 0/request_slowlog_timeout = 2/g" $fpmConf
+    sed -i -e "s/;slowlog = /slowlog = /g" $fpmConf
+
+    # unix
+    sed -i -e "s/;listen.owner = nobody/listen.owner = www/g" $fpmConf
+    sed -i -e "s/;listen.group = nobody/listen.group = www/g" $fpmConf
+
+    # tcp
+    sed -i -e "s/user = nobody/user = www/g" $fpmConf
+    sed -i -e "s/group = nobody/group = www/g" $fpmConf
+
     # pm
-    sed -i -e "s/pm.max_children = 5/pm.max_children = 128/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/pm.start_servers = 2/pm.start_servers = 64/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 32/g" /usr/local/php/etc/php-fpm.conf
-    sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 128/g" /usr/local/php/etc/php-fpm.conf
+    sed -i -e "s/pm.max_children = 5/pm.max_children = 128/g" $fpmConf
+    sed -i -e "s/pm.start_servers = 2/pm.start_servers = 64/g" $fpmConf
+    sed -i -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 32/g" $fpmConf
+    sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 128/g" $fpmConf
+    ####
+
 
     # 修改配置文件 php.ini
     sed -i -e "s/;date.timezone =/date.timezone = UTC/g" /usr/local/php/etc/php.ini
-    sed -i '/;extension=php_xsl.dll/a\zend_extension=opcache.so' /usr/local/php/etc/php.ini
+    # 追加拓展配置
+    line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
+    sed -i "$line"'a zend_extension=opcache.so' /usr/local/php/etc/php.ini
 
     # 软链
     ln -s /usr/local/php/bin/php /usr/local/bin/php
@@ -273,10 +293,11 @@ function install_php(){
     echo "....PHP安装完成...."
     echo "....开始安装PHP拓展...."
     sleep 1
-    install_php_ext_phalcon
+    install_php_ext_mongodb
     install_php_ext_redis
     install_php_ext_composer
     install_php_phpmyadmin
+    install_php_ext_phalcon
 }
 
 
@@ -287,12 +308,31 @@ function install_php_ext_phalcon(){
 
     # 开始安装Phalcon
     # sudo ./install 提示找不到phpize因为sudo的环境变量里没有/usr/local/bin/phpize
+    # git clone --depth=1 git://github.com/phalcon/cphalcon.git
     cd ${download_path}
-    git clone --depth=1 git://github.com/phalcon/cphalcon.git
-    cd cphalcon/build
+    curl https://codeload.github.com/phalcon/cphalcon/tar.gz/v3.4.0 -o cphalcon-3.4.0.tar.gz
+    tar zxf cphalcon-3.4.0.tar.gz
+    cd cphalcon-3.4.0/build
+    
     # 如果因为内存原因安装失败,可以执行 ./ext/install
     ./install
-    sed -i '/;extension=php_xsl.dll/a\extension=phalcon.so' /usr/local/php/etc/php.ini
+
+    line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
+    sed -i "$line"'a extension=phalcon.so' /usr/local/php/etc/php.ini
+}
+
+
+function install_php_ext_mongodb(){
+    cd ${download_path}
+    curl -O https://pecl.php.net/get/mongodb-1.5.1.tgz
+    tar zxf mongodb-1.5.1.tgz
+    cd mongodb-1.5.1
+    phpize
+    ./configure
+    make && make install
+
+    line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
+    sed -i "$line"'a extension=mongodb.so' /usr/local/php/etc/php.ini
 }
 
 
@@ -300,13 +340,15 @@ function install_php_ext_redis(){
     echo "........................................"
     echo "....开始安装PHP Redis拓展...."
     cd ${download_path}
-    curl -O https://github.com/phpredis/phpredis/archive/develop.zip -O phpredis.zip
-    unzip phpredis.zip
-    cd phpredis-develop
+    curl https://codeload.github.com/phpredis/phpredis/tar.gz/4.1.0 -o phpredis-4.1.0.tar.gz
+    tar zxf phpredis-4.1.0.tar.gz
+    cd phpredis-4.1.0
     phpize
     ./configure
     make && make install
-    sed -i '/;extension=php_xsl.dll/a\extension=redis.so' /usr/local/php/etc/php.ini
+
+    line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
+    sed -i "$line"'a extension=redis.so' /usr/local/php/etc/php.ini
 }
 
 
@@ -329,6 +371,30 @@ function install_php_phpmyadmin(){
     unzip phpMyAdmin-4.7.5-all-languages.zip
     mv phpMyAdmin-4.7.5-all-languages phpMyAdmin
     cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
+}
+
+
+# MongoDB
+function install_mongodb(){
+    exist=`ls /usr/local | grep mongodb | wc -l`
+    if [ $exist -gt 0 ]; then
+        echo "mongodb is already installed"
+        return
+    fi
+
+    cd ${download_path}
+    curl -O https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.0.tgz
+    tar zxf mongodb-linux-x86_64-rhel70-4.0.0.tgz
+    mv mongodb-linux-x86_64-rhel70-4.0.0 /usr/local/mongodb
+    ln -s /usr/local/mongodb/bin/mongo /usr/local/bin/mongo
+    ln -s /usr/local/mongodb/bin/mongod /usr/local/bin/mongod
+
+    # 配置
+    cat > /usr/local/mongodb/mongod.yml << EOF
+EOF
+
+    # 启动
+    # mongodb -f /usr/local/mongodb/mongod.yml
 }
 
 
