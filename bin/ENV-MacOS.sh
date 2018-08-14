@@ -52,10 +52,10 @@ function install_nginx(){
     fi
 
     cd ${download_path}
-    curl -O http://nginx.org/download/nginx-1.12.2.tar.gz
-    tar zxf nginx-1.12.2.tar.gz
-    cd nginx-1.12.2
-    ./configure --with-http_stub_status_module --with-http_ssl_module
+    curl -O http://nginx.org/download/nginx-1.14.0.tar.gz
+    tar zxf nginx-1.14.0.tar.gz
+    cd nginx-1.14.0
+    ./configure --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module
     make && make install
     ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
     chown -R www:www /usr/local/nginx/logs
@@ -96,14 +96,14 @@ function install_php(){
     ###############################################################
     #                          拓展安装                            #
     ###############################################################
-    # 更新拓展 MongoDB extension 1.4.2
+    # 更新拓展 MongoDB extension 1.4.4
     # 此处不建议使用pecl命令直接更新. pecl可能因为找不到openssl而失败
-    # 找不到openssl会提示错误 mongodb-1.4.2/src/libmongoc/src/mongoc/mongoc-init.c:32:10: fatal error: 'tls.h' file not found
+    # 找不到openssl会提示错误 mongodb-1.4.4/src/libmongoc/src/mongoc/mongoc-init.c:32:10: fatal error: 'tls.h' file not found
     # pecl uninstall mongodb && pecl install mongodb
     cd ${download_path}
-    curl -O https://pecl.php.net/get/mongodb-1.4.2.tgz
-    tar zxf mongodb-1.4.2.tgz
-    cd mongodb-1.4.2
+    curl -O https://pecl.php.net/get/mongodb-1.4.4.tgz
+    tar zxf mongodb-1.4.4.tgz
+    cd mongodb-1.4.4
     phpize
     # 此处openssl位置根据实际情况调整
     ./configure --with-mongodb-ssl=/usr/local/include/openssl
@@ -115,11 +115,28 @@ function install_php(){
     # cd ${download_path}
     # pecl install yaml
     # echo 'extension=yaml.so' > /usr/local/php5/php.d/50-extension-yaml.ini
+
+    install_php_ext_grpc
+    install_php_ext_phalcon
+}
+
+
+
+function install_php_ext_grpc(){
+    # 安装GRPC
+    # https://grpc.io/
+    exist=`grep -r -n grpc.so /usr/local/php5/php.d/ | wc -l`
+    if [ $exist -gt 0 ]; then
+        echo "grpc is already installed"
+        return
+    fi
+    pecl install grpc
+    echo 'extension=grpc.so' > /usr/local/php5/php.d/50-extension-grpc.ini
 }
 
 
 # 安装phalcon
-function install_phalcon(){
+function install_php_ext_phalcon(){
     exist=`grep -r -n phalcon.so /usr/local/php5/php.d/ | wc -l`
     if [ $exist -gt 0 ]; then
         echo "phalcon is already installed"
@@ -203,7 +220,7 @@ function install_mongodb(){
     cd ${download_path}
     curl -O https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.3.tgz
     tar zxf mongodb-osx-ssl-x86_64-3.6.3.tgz
-    mv mongodb-osx-ssl-x86_64-3.6.3 /usr/local/
+    mv mongodb-osx-ssl-x86_64-3.6.3 /usr/local/mongodb
     ln -s /usr/local/mongodb/bin/mongo /usr/local/bin/mongo
     ln -s /usr/local/mongodb/bin/mongod /usr/local/bin/mongod
     touch /usr/local/mongodb/mongod.conf.yml
@@ -214,7 +231,6 @@ function main(){
     install_env
     install_nginx
     install_php
-    install_phalcon
     install_mysql
     install_redis
     install_mongodb

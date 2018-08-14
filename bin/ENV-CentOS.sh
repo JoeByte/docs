@@ -47,10 +47,10 @@ function install_nginx(){
 
     # 安装nginx
     cd ${download_path}
-    curl -O http://nginx.org/download/nginx-1.12.2.tar.gz
-    tar zxf nginx-1.12.2.tar.gz
-    cd nginx-1.12.2
-    ./configure --with-http_stub_status_module --with-http_ssl_module
+    curl -O http://nginx.org/download/nginx-1.14.0.tar.gz
+    tar zxf nginx-1.14.0.tar.gz
+    cd nginx-1.14.0
+    ./configure --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module
     # --with-http_stub_status_module 监控模块
     make
     make install
@@ -310,9 +310,9 @@ function install_php_ext_phalcon(){
     # sudo ./install 提示找不到phpize因为sudo的环境变量里没有/usr/local/bin/phpize
     # git clone --depth=1 git://github.com/phalcon/cphalcon.git
     cd ${download_path}
-    curl https://codeload.github.com/phalcon/cphalcon/tar.gz/v3.4.0 -o cphalcon-3.4.0.tar.gz
-    tar zxf cphalcon-3.4.0.tar.gz
-    cd cphalcon-3.4.0/build
+    curl -L https://github.com/phalcon/cphalcon/archive/v3.4.1.tar.gz -o cphalcon-3.4.1.tar.gz
+    tar zxf cphalcon-3.4.1.tar.gz
+    cd cphalcon-3.4.1/build
     
     # 如果因为内存原因安装失败,可以执行 ./ext/install
     ./install
