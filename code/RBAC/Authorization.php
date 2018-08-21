@@ -36,12 +36,12 @@ JOIN `mp_assigned_resource` a ON
     r.id = a.resource_id
 WHERE
     (
-        a.entity_id IN(?) AND a.entity_type = 'ROLE'
+        a.entity_id IN({$roleIds}) AND a.entity_type = 'ROLE'
     ) OR(
-        a.entity_id = ? AND a.entity_type = 'USER'
+        a.entity_id = {$userId} AND a.entity_type = 'USER'
     )
 END;
-        $tmpResources = Capsule::select($sql, array($roleIds, $userId));
+        $tmpResources = Capsule::select($sql);
         $resources = [];
         foreach ($tmpResources as $value) {
             $resources[] = $value->resource;
