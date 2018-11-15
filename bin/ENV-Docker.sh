@@ -62,7 +62,7 @@ function install_zookeeper(){
     mv zookeeper-3.4.10 /usr/local/zookeeper
 
     # 配置
-    mkdir -p /data/zookeeper/
+    mkdir -p /usr/local/zookeeper/data/
     config='/usr/local/zookeeper/conf/zoo.cfg'
     cp /usr/local/zookeeper/conf/zoo_sample.cfg $config
     sed -i -e "s/dataDir=\/tmp\/zookeeper/dataDir=\/data\/zookeeper/g" $config
@@ -72,7 +72,7 @@ function install_zookeeper(){
 
     # TODO :: 手动标注集群ID
     # 每个节点不一样
-    echo '1' >/data/zookeeper/myid
+    echo '1' >/usr/local/zookeeper/data/myid
 
     # hosts
     ip=`get_ip`
