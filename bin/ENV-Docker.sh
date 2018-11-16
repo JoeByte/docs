@@ -65,7 +65,7 @@ function install_zookeeper(){
     mkdir -p /usr/local/zookeeper/data/
     config='/usr/local/zookeeper/conf/zoo.cfg'
     cp /usr/local/zookeeper/conf/zoo_sample.cfg $config
-    sed -i -e "s/dataDir=\/tmp\/zookeeper/dataDir=\/data\/zookeeper/g" $config
+    sed -i -e "s/dataDir=\/tmp\/zookeeper/dataDir=\/usr\/local\/zookeeper\/data/g" $config
     echo 'server.1=zoo1:2888:3888' >> $config
     echo 'server.2=zoo2:2888:3888' >> $config
     echo 'server.3=zoo3:2888:3888' >> $config
@@ -88,6 +88,12 @@ function install_zookeeper(){
     #
     # 连接
     # /usr/local/zookeeper/bin/zkCli.sh -server 127.0.0.1:2181
+
+    # 远程批量启动
+    # ssh node1 "/usr/local/zookeeper/bin/zkServer.sh start"
+    # ssh node2 "/usr/local/zookeeper/bin/zkServer.sh start"
+    # ssh node3 "/usr/local/zookeeper/bin/zkServer.sh start"
+
     return
 }
 
@@ -163,6 +169,104 @@ EOF
     return
 }
 
+# 安装HDFS
+function install_hdfs(){
+    exist=`ls /usr/local | grep hadoop | wc -l`
+    if [ $exist -gt 0 ]; then
+        echo "hadoop is already installed"
+        return
+    fi
+    echo "start install hadoop ..."
+    cd ${download_path}
+    curl -O https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz
+    tar xzf hadoop-2.8.5.tar.gz
+    mv hadoop-2.8.5 /usr/local/hadoop
+
+
+    # 配置
+    useradd hadoop
+    mkdir /home/hadoop/tmp
+
+    cat >> /hoem/hadoop/.bashrc <<EOF
+export JAVA_HOME=/usr/local/java
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+EOF
+
+    # TODO :: 配置ssh免密登录
+
+
+    # core-site.xml
+    cat > /usr/local/hadoop/etc/hadoop/core-site.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+        <property>
+             <name>hadoop.tmp.dir</name>
+             <value>file:/home/hadoop/tmp</value>
+             <description>Abase for other temporary directories.</description>
+        </property>
+        <property>
+             <name>fs.defaultFS</name>
+             <value>hdfs://master:9000</value>
+        </property>
+</configuration>
+EOF
+
+    
+    # hdfs-site.xml
+    cat > /usr/local/hadoop/etc/hadoop/hdfs-site.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+        <property>
+             <name>dfs.replication</name>
+             <value>3</value>
+        </property>
+        <property>
+             <name>dfs.namenode.name.dir</name>
+             <value>file:/home/hadoop/tmp/dfs/name</value>
+        </property>
+        <property>
+             <name>dfs.datanode.data.dir</name>
+             <value>file:/home/hadoop/tmp/dfs/data</value>
+        </property>
+</configuration>
+EOF
+
+
+    # 配置从节点 - Master主机特有（一行一个ip或者hostname）
+    # /usr/local/hadoop/etc/hadoop/slaves
+    cat > /usr/local/hadoop/etc/hadoop/slaves << EOF
+node2
+node3
+EOF
+
+    chown -R hadoop:hadoop /home/hadoop/
+    chown -R hadoop:hadoop /usr/local/hadoop
+
+    # 初始化
+    su - hadoop; /usr/local/hadoop/bin/hdfs namenode -format
+
+
+    # 开启
+    # /usr/local/hadoop/sbin/start-dfs.sh
+
+    # 关闭
+    # /usr/local/hadoop/sbin/stop-dfs.sh
+
+    # 查看集群
+    # hdfs dfsadmin -report
+
+    # UI管理界面
+    # http://master:50070
+
+    return
+}
+
 # 安装hbase
 function install_hbase(){
     exist=`ls /usr/local | grep hbase | wc -l`
@@ -187,21 +291,40 @@ function install_hbase(){
 
     # 参考配置 hbase-site.xml
     # hbase.rootdir 可配置为HDFS  hdfs://
-    # 
-    # <configuration>
-    #   <property>
-    #     <name>hbase.rootdir</name>
-    #     <value>file:///tmp/hbase</value>
-    #   </property>
-    #   <property>
-    #     <name>hbase.cluster.distributed</name>
-    #     <value>true</value>
-    #   </property>
-    #   <property>
-    #     <name>hbase.zookeeper.quorum</name>
-    #     <value>zoo1,zoo2,zoo3</value>
-    #   </property>
-    # </configuration>
+    cat > /usr/local/hbase/conf/hbase-site.xml <<EOF
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://master:9000/hbase</value>
+    <description>if local then set file:///home/testuser/hbase</description>
+  </property>
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>zoo1,zoo2,zoo3</value>
+    <description>ZooKeeper quorum servers</description>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/usr/local/zookeeper/data</value>
+  </property>
+</configuration>
+EOF
+
+    # regionservers节点;   cat >> 追加; cat > 覆盖
+    cat > /usr/local/hbase/conf/regionservers << EOF
+node1
+node2
+node3
+EOF
+
+    return
 }
 
 # 文档
