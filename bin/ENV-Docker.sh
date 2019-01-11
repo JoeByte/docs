@@ -275,9 +275,9 @@ function install_hbase(){
         return
     fi
     
-    curl -O http://mirrors.shu.edu.cn/apache/hbase/2.0.0/hbase-2.0.0-bin.tar.gz
-    tar xzf hbase-2.0.0-bin.tar.gz
-    mv hbase-2.0.0 /usr/local/hbase
+    curl -O http://mirrors.shu.edu.cn/apache/hbase/2.1.1/hbase-2.1.1-bin.tar.gz
+    tar xzf hbase-2.1.1-bin.tar.gz
+    mv hbase-2.1.1 /usr/local/hbase
 
     # 使用现有已存在的zookeeper
     sed -i "s/# export HBASE_MANAGES_ZK=true/export HBASE_MANAGES_ZK=false/g" /usr/local/hbase/conf/hbase-env.sh
