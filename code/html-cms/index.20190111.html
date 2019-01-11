@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+
+<head>
+    <meta charset="UTF-8">
+    <title>科技 - 今日焦点</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content=""/>
+    <meta property="og:url" content="http://reactive.how" />
+    <meta property="og:title" content="Map vs Filter - Project function vs Predicate" />
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="Learn RxJS operators and Reactive Programming principles." />
+    <meta property="og:image" content="http://reactive.how/img/filter/content_preview.jpg" />
+    <meta property="og:site_name" content="Reactive.how" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@CedricSoulas" />
+    <meta name="twitter:creator" content="@CedricSoulas" />
+    <meta name="twitter:image:alt" content="Merge vs Combine reactive operator" />
+    <link rel="stylesheet" href="assets/css/style.css?v=a4b">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png?v=2">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico?v=2">
+    <link rel="icon" sizes="64x64" href="assets/img/favicon.icns?v=2">
+</head>
+
+<body class="font-normal bg-grey-darkest text-grey-light leading-normal light">
+<script>
+    // 切换夜间模式
+    var toggleTheme=function(){var e="dark",t="light",o="prefers-color-scheme",c=localStorage.getItem(o)||t;function a(e){localStorage.setItem(o,e),c=e}function l(){document.body.className=document.body.className.replace(/ light/g,"")}return c==e&&l(),function(){c==e?(document.body.className+=" light",a(t)):(l(),a(e))}}();
+</script>
+
+<!--顶部-->
+<div class="fixed pin-t pin-x z-1000 bg-grey-darkest box-shadow">
+    <div class="flex justify-between items-center h-16 relative sm:px-4 max-w-2xl mx-auto">
+
+        <div class="sm:mr-2 text-left ml-4 sm:ml-2 flex items-center">
+            <a class="text-teal no-underline tracking-wide" href="/">今日焦点</a>
+            <span class="hidden text-xs text-grey sm:inline rounded-full font-thin ml-2"> 科技版</span>
+            <a class="hidden border border-grey-dark moon m-4 bg-grey-darker shadow-inner rounded-full md:flex text-xs items-center cursor-pointer" onClick="toggleTheme()">
+                <svg class="shadow" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><style>.moon{fill:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}</style></defs><title>weather-night-clear</title><polyline class="moon" points="15.75 1.75 14.659 4.658 11.75 5.75 14.659 6.84 15.75 9.75 16.841 6.84 19.75 5.75 16.841 4.658 15.75 1.75"/><polyline class="moon" points="20.75 9.75 20.205 11.204 18.75 11.75 20.205 12.295 20.75 13.75 21.295 12.295 22.75 11.75 21.295 11.204 20.75 9.75"/><path class="moon" d="M17.75,16.25A8.5,8.5,0,0,1,9.623,5.256a8.5,8.5,0,1,0,8.253,10.987C17.834,16.244,17.793,16.25,17.75,16.25Z"/></svg>
+            </a>
+        </div>
+        <div class="flex-grow hidden items-center justify-center">
+            <a class="ml-8 radio-link selected" href="#">
+                <div>隐藏标题</div>
+            </a>
+        </div>
+        <div class="flex items-center">
+            <a class="hidden py-2 px-3 rounded sm:block mr-2" href="https://github.com/HuiByte/">
+                <svg class="fill-current inline-block align-middle" height="21" width="21" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.6 31.8" >
+                <path  d="M16.3,0C7.3,0,0,7.3,0,16.3c0,7.2,4.7,13.3,11.1,15.5c0.8,0.1,1.1-0.4,1.1-0.8c0-0.4,0-1.4,0-2.8
+	c-4.5,1-5.5-2.2-5.5-2.2c-0.7-1.9-1.8-2.4-1.8-2.4c-1.5-1,0.1-1,0.1-1c1.6,0.1,2.5,1.7,2.5,1.7c1.5,2.5,3.8,1.8,4.7,1.4
+	c0.1-1.1,0.6-1.8,1-2.2c-3.6-0.4-7.4-1.8-7.4-8.1c0-1.8,0.6-3.2,1.7-4.4C7.4,10.7,6.8,9,7.7,6.8c0,0,1.4-0.4,4.5,1.7
+	c1.3-0.4,2.7-0.5,4.1-0.5c1.4,0,2.8,0.2,4.1,0.5c3.1-2.1,4.5-1.7,4.5-1.7c0.9,2.2,0.3,3.9,0.2,4.3c1,1.1,1.7,2.6,1.7,4.4
+	c0,6.3-3.8,7.6-7.4,8c0.6,0.5,1.1,1.5,1.1,3c0,2.2,0,3.9,0,4.5c0,0.4,0.3,0.9,1.1,0.8c6.5-2.2,11.1-8.3,11.1-15.5
+	C32.6,7.3,25.3,0,16.3,0z"/>
+            </svg>
+            </a>
+            <a href="https://twitter.com" class="hidden no-underline px-4 py-2 mr-2 sm:flex items-center">
+                      <span class="hidden sm:inline-block sm:mr-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="inline-block align-middle" width="16" height="16" viewBox="0 0 24 24"><defs></defs><title>social-media-twitter</title><path class="fill-current stroke-current" d="M23,6.628l-2-.5,1-2-2.464.7A4.48,4.48,0,0,0,12,8.128v1c-3.539.73-6.634-1.2-9.5-4.5q-.75,4,1.5,6l-3-.5c.405,2.069,1.362,3.7,4,4l-2.5,1c1,2,2.566,2.31,5,2.5a10.748,10.748,0,0,1-6.5,2c12.755,5.669,20-2.664,20-10V8.3Z"/></svg>
+                      </span>
+                <span class="block">关注</span>
+            </a>
+            <a href="#subscribe" class="no-underline rounded px-4 py-2 mr-2 flex items-center"><span class="inline-block sm:mr-2">
+                      <svg class="email-icon -mb-1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><defs><style>.b{fill:currentColor;stroke:black;stroke-linecap:round;stroke-linejoin:round;}</style></defs><title>email-action-heart_1</title><path class="b" d="M17.5,23.5l-5.114-5.335a3.025,3.025,0,0,1-.567-3.492h0a3.026,3.026,0,0,1,4.846-.786l.835.835.835-.835a3.026,3.026,0,0,1,4.846.786h0a3.025,3.025,0,0,1-.567,3.492Z"/><path class="b" d="M9.5,14.5H2A1.5,1.5,0,0,1,.5,13V2A1.5,1.5,0,0,1,2,.5H20A1.5,1.5,0,0,1,21.5,2v8.5"/><polyline class="b" points="21.067 0.946 11 9 0.933 0.946"/></svg>️ </span>
+                <span class="hidden sm:block">订阅</span>
+            </a>
+            <a href="#operators" class="sm:hidden mx-4 font-bold float-right uppercase no-underline text-sm text-grey-darkest bg-grey-light rounded p-2 font-sans">菜单</a>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="content flex flex-wrap-reverse md:flex-wrap">
+
+    <!--body部分-->
+    <div class="w-full">
+
+        <div class="">
+
+            <div class="mx-auto max-w-2xl" style="border-top: #ddd 1px solid;">
+
+                <!--文章内容-->
+                <div class="post pb-8 p-4" style="width: 700px; float: left;">
+
+                    <!--宽度max-w-xl 或者 max-w-lg-->
+                    <div class="pt-4 mx-auto">
+
+
+                        <h2 id="hui-article-title">外交部就金正恩访华、孟晚舟事件等答问,中方高度评价金正恩委员长在中朝迎来建交70周年之际</h2>
+
+
+                        <p><img src="https://upload.jianshu.io/admin_banners/web_images/4603/d2b74e05eff3ede5eff7906f85d60ac2a93b4584.jpg"
+                                style="border-width: 0px; border-style: initial;  margin: 0px auto; display: block;">
+                        </p>
+                        <p>
+                            （原标题：外交部就金正恩访华、孟晚舟事件等答问）
+                        </p>
+                        <p><!--StartFragment--></p>
+                        <p><strong>2019年1月10日外交部发言人陆慷主持例行记者会</strong></p>
+                        <p>
+                            <strong>问：我们已经看到了中方发布的朝鲜最高领导人金正恩访华相关情况。请问中方如何评价金正恩此次访华的成果？今年是中朝建交70周年，中方对中朝关系未来发展有何期待？</strong>
+                        </p>
+                        <p>
+                            答：中方和朝方都已经发布了金正恩委员长访华的消息。中方高度评价金正恩委员长在中朝迎来建交70周年之际、新年伊始对中国进行访问。正如你看到，习近平总书记、国家主席同金正恩委员长进行了深入友好的会见、会谈。两国领导人就中朝关系和共同关心的问题深入交换意见，达成了重要共识。据我了解，双方还通报了各自国内的形势。</p>
+                        <p>
+                            中国党和政府高度重视中朝友好合作关系，维护好、巩固好、发展好中朝关系始终是中国党和政府坚定不移的方针。在双方共同努力下，中朝关系在2018年掀开了新的历史篇章。双方以实际行动展示了中朝友谊的强大生命力，彰显了中朝共同致力于推动半岛问题政治解决进程的坚定意志。</p>
+                        <p>
+                            今年是中朝建交70周年。中方愿同朝方保持高层交往、加强战略沟通、深化务实合作，推动中朝关系在新的时期不断取得新的发展，持续推进半岛问题政治解决进程，更好造福两国人民，为地区和世界和平稳定与发展繁荣作出积极贡献。</p>
+                        <p><strong>问：据朝中社报道，朝鲜最高领导人金正恩已邀请习近平主席访朝。请问习主席何时访朝？</strong></p>
+                        <p>答：中朝之间有高层互访的传统。高层交往在中朝关系发展中历来发挥着重要的引领和推动作用。我们愿同朝方加强高层交往，深化战略沟通，扩大交流合作。如果有这方面的消息，我们会及时发布。</p>
+
+                        <p><strong>记者解释：公司名字叫Badger Sportswear。他们为大学生生产运动类服装。</strong></p>
+                        <p>答：作为原则，我们不对任何企业的生产或商业布局作评论。但是，如果美联社报道提及的这家企业是基于错误的信息停止和中国开展贸易往来，我认为对这家企业来说是可悲的。</p>
+                        <p>
+                            我想强调，第一，中国已经废除了劳教制度。新疆职业技能教育培训和有关方面所谓的“强制劳动”完全是性质不同的两码事。第二，关于新疆开展职业技能教育培训工作的情况，新疆自治区主席雪克来提·扎克尔曾就此作了详细介绍，你可以查阅。</p>
+                        <p><!--EndFragment--></p>
+                        <p></p>
+                        <div class="ep-source cDGray">
+                            <span class="left"><a href="https://news.163.com/">
+                                <img src="http://static.ws.126.net/cnews/css13/img/end_news.png" alt="史建磊" width="13"
+                                    height="12" class="icon"></a> 本文来源：外交部网站  </span>
+                            <span class="ep-editor">责任编辑：史建磊_NBJ11331</span>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <div class="pt-4" style="width: 350px; float: right;">
+                    文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容文章内容
+                </div>
+
+
+                <div style="clear: both"></div>
+
+            </div>
+        </div>
+
+
+
+        <!--最下面-->
+        <div class="mx-auto max-w-2xl mt-8">
+            <div class="mt-8 mt-8 px-6 text-center">
+                <h2 class="max-w-sm mx-auto text-center pb-2 font-sans">News</h2>
+                <p class="mb-2">
+                    <a href="https://twitter.com/JoePlayTime" class="btn-blue font-sans text-base">
+                <span class="hidden sm:inline-block sm:mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline-block align-middle" width="18" height="18" viewBox="0 0 24 24"><defs></defs><title>social-media-twitter</title><path class="fill-current stroke-current" d="M23,6.628l-2-.5,1-2-2.464.7A4.48,4.48,0,0,0,12,8.128v1c-3.539.73-6.634-1.2-9.5-4.5q-.75,4,1.5,6l-3-.5c.405,2.069,1.362,3.7,4,4l-2.5,1c1,2,2.566,2.31,5,2.5a10.748,10.748,0,0,1-6.5,2c12.755,5.669,20-2.664,20-10V8.3Z"/></svg>
+                </span>@twitter</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<footer class="mx-8 text-center tracking-wide mt-0 py-10">
+    <div class="text-center rounded bg-black max-w-sm mx-auto p-4 mb-6">
+        <h2>夜间模式</h2>
+        <a class="moon flex border border-grey-dark mx-auto m-4 bg-grey-darker shadow-inner rounded-full md:flex text-xs items-center cursor-pointer" onClick="toggleTheme()">
+            <svg class="shadow" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><style>.moon{fill:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}</style></defs><title>weather-night-clear</title><polyline class="moon" points="15.75 1.75 14.659 4.658 11.75 5.75 14.659 6.84 15.75 9.75 16.841 6.84 19.75 5.75 16.841 4.658 15.75 1.75"/><polyline class="moon" points="20.75 9.75 20.205 11.204 18.75 11.75 20.205 12.295 20.75 13.75 21.295 12.295 22.75 11.75 21.295 11.204 20.75 9.75"/><path class="moon" d="M17.75,16.25A8.5,8.5,0,0,1,9.623,5.256a8.5,8.5,0,1,0,8.253,10.987C17.834,16.244,17.793,16.25,17.75,16.25Z"/></svg>
+        </a>
+    </div>
+    <p class="">
+        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><style>.cls-1{fill:none;stroke:rgb(255, 0, 165);stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5;}</style></defs>
+            <title>The elephant in Nantes (Les Machines de l'île)</title>
+            <path class="cls-1" d="M16.691,13.477V6.951a5,5,0,0,0-5-5,7.258,7.258,0,0,0-3,.5,3.625,3.625,0,0,0-5-.5A9.959,9.959,0,0,0,1.054,5.242,2,2,0,0,0,.871,6.7c.427,1.67,1.554,5.623,2.82,6.256,1,.5,3-1,3-1"/>
+            <path class="cls-1" d="M13.691,17.451c0,4,1.5,5.5,4.5,5.5a5.893,5.893,0,0,0,5-2.5,2.223,2.223,0,0,1-2.5-1c-2,1.5-4,1-4-2V15.486"/>
+            <path class="cls-1" d="M10.691,13.951a12.384,12.384,0,0,0,4.5,1.5c3,.5,4-1.5,4-1.5a12.018,12.018,0,0,1-4-1,10.822,10.822,0,0,1-3-1.5"/>
+            <path class="cls-1" d="M11.941,7.451a.25.25,0,0,1,.25.25"/>
+            <path class="cls-1" d="M11.691,7.7a.25.25,0,0,1,.25-.25"/>
+            <path class="cls-1" d="M11.941,7.951a.25.25,0,0,1-.25-.25"/>
+            <path class="cls-1" d="M12.191,7.7a.25.25,0,0,1-.25.25"/>
+            <path class="cls-1" d="M3.691,5.451c1-1.5,2.5-2,3.5-1a9.933,9.933,0,0,0,0,4"/></svg>
+    </p>
+    <p class="">
+        <a href="#" class="">微博</a> |
+        <a href="#" class="">头条</a> |
+        <span class="">
+            <a class="" href="#subscribe">mail</a> |
+            <a class="" href="https://github.com/HuiByte">github</a> |
+        </span>
+        <a href="https://www.facebook.com/JoeChuPlay" class="">facebook</a> |
+        <a href="https://www.facebook.com/JoeChuPlay" class="">twitter</a> |
+        <a class="" href="mailto:service@huibyte.com">邮件</a>
+
+        <br/>
+        <span class="my-8 font-thin text-grey">all right © 2018</span>  上海浅灰科技有限公司
+    </p>
+
+</footer>
+
+<script>
+</script>
+
+</body>
+
+</html>
