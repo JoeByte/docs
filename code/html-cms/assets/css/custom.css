@@ -72,7 +72,7 @@ footer {
 }
 
 .user-card-article-item {
-    margin-top: 12px;
+    margin-top: 12px !important;
     line-height: 20px;
     font-size: 14px;
     padding-left: 9px;
@@ -90,8 +90,8 @@ footer {
 }
 
 .sidebar .title {
-    margin: 0 0 10px 10px;
-    font-size: 17px;
+    margin: 10px 15px;
+    font-size: 18px;
     font-weight: bold;
 }
 
@@ -104,12 +104,14 @@ footer {
 .sidebar .image-list li {
     width: 162px;
     float: left;
+    margin-bottom: 15px;
     margin-left: 10px;
 }
 
 .sidebar .file-img {
     height: 90px;
     overflow: hidden;
+    border-radius:5px;
 }
 
 .sidebar .file-img img {
