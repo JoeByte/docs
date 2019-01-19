@@ -52,9 +52,9 @@ function install_nginx(){
     fi
 
     cd ${download_path}
-    curl -O http://nginx.org/download/nginx-1.14.0.tar.gz
-    tar zxf nginx-1.14.0.tar.gz
-    cd nginx-1.14.0
+    curl -O http://nginx.org/download/nginx-1.14.2.tar.gz
+    tar zxf nginx-1.14.2.tar.gz
+    cd nginx-1.14.2
     ./configure --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module
     make && make install
     ln -s /usr/local/nginx/sbin/nginx /usr/local/bin/nginx
@@ -101,9 +101,9 @@ function install_php(){
     # 找不到openssl会提示错误 mongodb-1.4.4/src/libmongoc/src/mongoc/mongoc-init.c:32:10: fatal error: 'tls.h' file not found
     # pecl uninstall mongodb && pecl install mongodb
     cd ${download_path}
-    curl -O https://pecl.php.net/get/mongodb-1.4.4.tgz
-    tar zxf mongodb-1.4.4.tgz
-    cd mongodb-1.4.4
+    curl -O https://pecl.php.net/get/mongodb-1.5.3.tgz
+    tar zxf mongodb-1.5.3.tgz
+    cd mongodb-1.5.3
     phpize
     # 此处openssl位置根据实际情况调整
     ./configure --with-mongodb-ssl=/usr/local/include/openssl
@@ -218,9 +218,9 @@ function install_mongodb(){
     fi
 
     cd ${download_path}
-    curl -O https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-3.6.3.tgz
-    tar zxf mongodb-osx-ssl-x86_64-3.6.3.tgz
-    mv mongodb-osx-ssl-x86_64-3.6.3 /usr/local/mongodb
+    curl -O https://fastdl.mongodb.org/osx/mongodb-osx-ssl-x86_64-4.0.5.tgz
+    tar zxf mongodb-osx-ssl-x86_64-4.0.5.tgz
+    mv mongodb-osx-ssl-x86_64-4.0.5 /usr/local/mongodb
     ln -s /usr/local/mongodb/bin/mongo /usr/local/bin/mongo
     ln -s /usr/local/mongodb/bin/mongod /usr/local/bin/mongod
     touch /usr/local/mongodb/mongod.conf.yml
