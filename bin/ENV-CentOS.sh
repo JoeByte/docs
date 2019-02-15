@@ -47,9 +47,9 @@ function install_nginx(){
 
     # 安装nginx
     cd ${download_path}
-    curl -O http://nginx.org/download/nginx-1.14.0.tar.gz
-    tar zxf nginx-1.14.0.tar.gz
-    cd nginx-1.14.0
+    curl -O http://nginx.org/download/nginx-1.14.2.tar.gz
+    tar zxf nginx-1.14.2.tar.gz
+    cd nginx-1.14.2
     ./configure --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module
     # --with-http_stub_status_module 监控模块
     make
@@ -65,10 +65,10 @@ function install_nginx(){
     chown -R www:www /data/logs/nginx/
 
     mkdir /usr/local/nginx/conf/conf.d
-    sed -i -e "s/user  nobody/user  www/g" /usr/local/nginx/conf/nginx.conf
+    sed -i -e "s/#user  nobody/user  www/g" /usr/local/nginx/conf/nginx.conf
     # 权限
     chown -R www:www /usr/local/nginx/logs
-    chown -R www:www /usr/local/nginx/*temp
+    #chown -R www:www /usr/local/nginx/*temp (启动nginx后才生成临时文件)
 
     echo "....nginx安装完成...."
 }
@@ -194,9 +194,9 @@ function install_php(){
     # 安装PHP
     cd ${download_path}
     # curl -O http://cn2.php.net/distributions/php-5.6.32.tar.gz
-    curl -O http://cn2.php.net/distributions/php-7.2.8.tar.gz
-    tar zxf php-7.2.8.tar.gz
-    cd php-7.2.8
+    curl -O http://cn2.php.net/distributions/php-7.2.15.tar.gz
+    tar zxf php-7.2.15.tar.gz
+    cd php-7.2.15
 
     # 备注: Mcrypt在PHP7.1.0中被弃用， 在PHP7.2.0中删除. 替代OpenSSL, Sodium (available as of PHP 7.2.0)
     # 没有 ssh2 redis mongo
@@ -211,11 +211,8 @@ function install_php(){
     --enable-inline-optimization --enable-mbregex --enable-mbstring --enable-pcntl \
     --enable-sockets  --enable-soap \
     --enable-zip --enable-opcache \
-    --enable-intl
+    --enable-intl --with-gmp
     #--with-mysqli=/usr/local/mysql/bin/mysql_config --with-pdo-mysql
-
-    # --with-libzip
-    # php5.5 可忽略此参数
 
     # 新增 --enable-sysvshm --enable-sysvmsg
 
@@ -293,15 +290,45 @@ function install_php(){
     echo "....PHP安装完成...."
     echo "....开始安装PHP拓展...."
     sleep 1
-    install_php_ext_mongodb
-    install_php_ext_redis
     install_php_ext_composer
     install_php_phpmyadmin
+    install_php_ext_mongodb
+    install_php_ext_redis
     install_php_ext_phalcon
 }
 
 
+function install_php_ext_zephir(){
+    # https://github.com/phalcon/php-zephir-parser
+    cd ${download_path}
+    git clone git://github.com/phalcon/php-zephir-parser.git
+    cd php-zephir-parser
+    phpize
+    ./configure
+    make
+    make install
+    line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
+    sed -i "$line"'a extension=zephir_parser.so' /usr/local/php/etc/php.ini
+}
+
+
+function install_zephir(){
+    # https://docs.zephir-lang.com/0.11/en/installation
+    cd ${download_path}
+    git clone https://github.com/phalcon/zephir
+    cd zephir
+    ./install -c
+    composer install
+}
+
+
 function install_php_ext_phalcon(){
+    # php7以上安装 phalcon 需要借助Zephir安装phalcon
+    # 目前phalcon的C文件为php5设计，安装到php7上需要借助 https://github.com/phalcon/zephir
+    # see https://github.com/phalcon/cphalcon/issues/11923
+    install_php_ext_zephir
+    install_zephir
+
     echo "........................................"
     echo "....开始安装Phalcon...."
     sleep 1
@@ -310,12 +337,16 @@ function install_php_ext_phalcon(){
     # sudo ./install 提示找不到phpize因为sudo的环境变量里没有/usr/local/bin/phpize
     # git clone --depth=1 git://github.com/phalcon/cphalcon.git
     cd ${download_path}
-    curl -L https://github.com/phalcon/cphalcon/archive/v3.4.1.tar.gz -o cphalcon-3.4.1.tar.gz
-    tar zxf cphalcon-3.4.1.tar.gz
-    cd cphalcon-3.4.1/build
+    curl -L https://github.com/phalcon/cphalcon/archive/v3.4.2.tar.gz -o cphalcon-3.4.2.tar.gz
+    tar zxf cphalcon-3.4.2.tar.gz
+    cd cphalcon-3.4.2
+
+    # php7.* 安装
+    ../zephir/zephir build
     
-    # 如果因为内存原因安装失败,可以执行 ./ext/install
-    ./install
+    # php5.* 安装，如果因为内存原因安装失败,可以执行 cd ext; ./install
+    # cd build; ./install
+    # cd ext; ./install
 
     line=$[`grep '; Dynamic Extensions ;' -n /usr/local/php/etc/php.ini | awk -F: '{print $1}'` + 2]
     sed -i "$line"'a extension=phalcon.so' /usr/local/php/etc/php.ini
@@ -324,9 +355,9 @@ function install_php_ext_phalcon(){
 
 function install_php_ext_mongodb(){
     cd ${download_path}
-    curl -O https://pecl.php.net/get/mongodb-1.5.1.tgz
-    tar zxf mongodb-1.5.1.tgz
-    cd mongodb-1.5.1
+    curl -O https://pecl.php.net/get/mongodb-1.5.3.tgz
+    tar zxf mongodb-1.5.3.tgz
+    cd mongodb-1.5.3
     phpize
     ./configure
     make && make install
@@ -337,12 +368,13 @@ function install_php_ext_mongodb(){
 
 
 function install_php_ext_redis(){
+    # https://github.com/phpredis/phpredis
     echo "........................................"
     echo "....开始安装PHP Redis拓展...."
     cd ${download_path}
-    curl https://codeload.github.com/phpredis/phpredis/tar.gz/4.1.0 -o phpredis-4.1.0.tar.gz
-    tar zxf phpredis-4.1.0.tar.gz
-    cd phpredis-4.1.0
+    curl https://codeload.github.com/phpredis/phpredis/tar.gz/4.2.0 -o phpredis-4.2.0.tar.gz
+    tar zxf phpredis-4.2.0.tar.gz
+    cd phpredis-4.2.0
     phpize
     ./configure
     make && make install
@@ -367,9 +399,9 @@ function install_php_phpmyadmin(){
     # phpMyAdmin
     # 登录不上则修改config.inc.php的$cfg['Servers'][$i]['host']为127.0.0.1
     cd /data/www
-    curl -O https://files.phpmyadmin.net/phpMyAdmin/4.7.5/phpMyAdmin-4.7.5-all-languages.zip
-    unzip phpMyAdmin-4.7.5-all-languages.zip
-    mv phpMyAdmin-4.7.5-all-languages phpMyAdmin
+    curl -O https://files.phpmyadmin.net/phpMyAdmin/4.8.5/phpMyAdmin-4.8.5-all-languages.zip
+    unzip phpMyAdmin-4.8.5-all-languages.zip
+    mv phpMyAdmin-4.8.5-all-languages phpMyAdmin
     cp ./phpMyAdmin/config.sample.inc.php ./phpMyAdmin/config.inc.php 
 }
 
