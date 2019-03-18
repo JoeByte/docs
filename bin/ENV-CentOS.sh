@@ -174,6 +174,8 @@ function install_mysql(){
 }
 
 
+# yum install php72 php72-php-fpm php72-php-gd php72-php-pdo php72-php-phalcon3 php72-php-mysqlnd php72-php-pecl-redis php72-php-pecl-mongodb
+# 启动php-fpm命令  systemctl start php72-php-fpm.service
 function install_php(){
     exist=`ls /usr/local | grep php | wc -l`
     if [ $exist -gt 0 ]; then
